@@ -24,6 +24,34 @@ This setup uses a custom `Dockerfile` rather than the standard Airflow image to 
 * `astronomer-cosmos` in the main Airflow environment for dbt orchestration.
 * `dbt-core` and `dbt-duckdb` inside a dedicated virtual environment (`dbt_venv`).
 
+## System Architecture & Cosmos Configuration
+
+This project integrates Apache Airflow with dbt using Astronomer Cosmos. To ensure stable execution against a local DuckDB database, the following configurations are required:
+
+### 1. Docker Volume Mappings
+The default Airflow `docker-compose.yaml` does not map custom directories. Ensure the `include/` directory is mapped in the `volumes` section so the scheduler can parse the `dbt_project.yml` and `profiles.yml` files:
+```yaml
+volumes:
+  - ${AIRFLOW_PROJ_DIR:-.}/include:/opt/airflow/include
+```
+
+### 2. Astronomer Cosmos Execution Mode
+Do not use `ExecutionMode.VIRTUALENV`. This causes Cosmos to attempt building an empty Python environment in the `/tmp` directory on every run, which will fail to find `dbt-duckdb`. 
+Instead, use `ExecutionMode.LOCAL` and point it directly to the pre-built virtual environment configured in the Dockerfile:
+```python
+ExecutionConfig(
+    execution_mode=ExecutionMode.LOCAL,
+    dbt_executable_path="/opt/airflow/dbt_venv/bin/dbt",
+)
+```
+
+### 3. DuckDB Concurrency Limits
+DuckDB is an in-process database and strictly requires a single writer. Because Cosmos automatically parallelizes dbt models that share dependencies, it will cause `IO Error: Could not set lock on file` crashes if two models execute simultaneously. 
+To prevent this, the DAG is throttled to sequential execution using:
+```python
+max_active_tasks=1
+```
+
 ## Initial Setup
 
 1. **Clone the repository:**
