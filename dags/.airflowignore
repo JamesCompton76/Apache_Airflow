@@ -1,0 +1,5 @@
+README.md
+venv/
+logs/
+target/
+dbt_packages/

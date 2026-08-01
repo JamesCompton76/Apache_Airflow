@@ -1,0 +1,7 @@
+version: 2
+sources:
+  - name: fivetran_bronze
+    tables:
+      - name: raw_taxi_data
+        meta:
+          external_location: "'/opt/airflow/data/yellow_tripdata_2024-01.parquet'"

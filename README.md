@@ -12,6 +12,8 @@ This repository contains a local development and testing environment for Apache 
 Airflow requires specific folders to be mounted for the containers to run properly. Here is what goes in each:
 
 * **`dags/`**: Your workflow definitions belong here. Drop your Python DAG files into this directory, and the scheduler will automatically parse and execute them.
+* **`include/`**: Put your dbt projects in this directory (e.g., `include/dbt/taxi_demo`). Astronomer Cosmos best practices dictate keeping dbt files separate from `dags/` to keep the Airflow scheduler running efficiently.
+* **`data/`**: Used for local data storage, such as raw Parquet files and your DuckDB database file. **Note:** You must map `- ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data` under volumes in your `docker-compose.yaml` for Airflow to access it.
 * **`plugins/`**: If you write custom hooks, operators, or sensors to extend Airflow's functionality, place those Python files in this folder.
 * **`config/`**: This directory is used for custom environment configurations or `airflow.cfg` overrides.
 * **`logs/`**: Airflow will write all task execution history and webserver logs here. To prevent cluttering your repository, this directory is typically ignored by version control.
@@ -36,14 +38,20 @@ This setup uses a custom `Dockerfile` rather than the standard Airflow image to 
    echo -e "AIRFLOW_UID=$(id -u)" > .env
    ```
 
-3. **Initialize the Airflow database:**
+3. **Optional: Download Sample Data:**
+   If you want to test the dbt pipeline with the NYC Yellow Taxi dataset, you can automatically download the January 2024 Parquet file directly into your `data/` directory:
+   ```bash
+   curl -o data/yellow_tripdata_2024-01.parquet [https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet](https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet)
+   ```
+
+4. **Initialize the Airflow database:**
    Because we are using a custom image, you must build it before initializing the database:
    ```bash
    docker compose build
    docker compose up airflow-init
    ```
 
-4. **Start the environment:**
+5. **Start the environment:**
    ```bash
    docker compose up -d
    ```

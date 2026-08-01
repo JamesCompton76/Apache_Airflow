@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_yellow_tripdata
+    description: "Silver layer view standardising raw taxi ingestion data."
+    columns:
+      - name: vendor_id
+        description: "Vendor identification code."
+        tests:
+          - not_null
+      - name: total_amount
+        description: "Total charge to passengers. Filtered to be strictly positive."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0.01
+              inclusive: true

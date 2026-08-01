@@ -1,0 +1,14 @@
+# Python virtual environment
+venv/
+__pycache__/
+
+# dbt generated files
+target/
+dbt_packages/
+logs/
+
+# Database and raw data files
+*.duckdb
+*.duckdb.wal
+*.parquet
+data/
