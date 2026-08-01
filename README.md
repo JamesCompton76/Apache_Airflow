@@ -7,6 +7,15 @@ This repository contains a local development and testing environment for Apache 
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker Compose)
 * Git
 
+## Directory Structure
+
+Airflow requires specific folders to be mounted for the containers to run properly. Here is what goes in each:
+
+* **`dags/`**: Your workflow definitions belong here. Drop your Python DAG files into this directory, and the scheduler will automatically parse and execute them.
+* **`plugins/`**: If you write custom hooks, operators, or sensors to extend Airflow's functionality, place those Python files in this folder.
+* **`config/`**: This directory is used for custom environment configurations or `airflow.cfg` overrides.
+* **`logs/`**: Airflow will write all task execution history and webserver logs here. To prevent cluttering your repository, this directory is typically ignored by version control.
+
 ## Initial Setup
 
 1. **Clone the repository:**
