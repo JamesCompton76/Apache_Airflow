@@ -11,8 +11,8 @@ This repository contains a local development and testing environment for Apache 
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/JamesCompton76/Apache_Airflow.git](https://github.com/JamesCompton76/Apache_Airflow.git)
-   cd Apache_Airflow
+   git clone [https://github.com/JamesCompton76/apache-airflow-docker.git](https://github.com/JamesCompton76/apache-airflow-docker.git)
+   cd apache-airflow-docker
    ```
 
 2. **Set up host user permissions:**
