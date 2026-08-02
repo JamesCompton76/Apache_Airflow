@@ -105,6 +105,7 @@ t1 >> [t2, t3] >> t4
 * **Access the UI:** Navigate to `http://localhost:8080`
 * **Credentials:** `airflow` / `airflow`
 * **Adding Workflows:** Drop your Python DAG files into the `dags/` directory. The scheduler will automatically parse them.
+* **Scheduling DAGs:** To change how often a DAG runs, modify the `schedule_interval` parameter within your Python file (e.g., `schedule_interval="*/10 * * * *"`). Airflow accepts standard cron expressions, presets like `@daily`, or `None` for purely manual triggers. If you need help writing or translating cron syntax, [Crontab.guru](https://crontab.guru/) is an excellent interactive editor.
 
 ## Teardown
 
