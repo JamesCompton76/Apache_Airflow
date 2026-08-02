@@ -65,7 +65,20 @@ To build a traditional DAG without dbt, you can define tasks and their dependenc
 ```python
 t1 >> [t2, t3] >> t4
 ```
-*Note: The main Airflow environment does not have the `duckdb` Python library installed by default (it is isolated in `dbt_venv`). For testing manual lineage graphs without database connections, use dummy functions like `time.sleep()`.*
+
+**Executing DuckDB Queries in Manual DAGs:**
+The main Airflow environment does not have the `duckdb` Python library installed by default (it is isolated in `dbt_venv`). To execute real database queries against DuckDB in a manual DAG, you must use the `ExternalPythonOperator` to point the task directly to the isolated virtual environment:
+
+```python
+from airflow.operators.python import ExternalPythonOperator
+
+t1 = ExternalPythonOperator(
+    task_id="create_cleansed_table",
+    python="/opt/airflow/dbt_venv/bin/python",
+    python_callable=your_duckdb_function
+)
+```
+*Note: Because `ExternalPythonOperator` runs your function in an isolated background process, any global variables (such as file paths) must be defined directly inside the function scope to prevent `NameError` exceptions.*
 
 ## Initial Setup
 
